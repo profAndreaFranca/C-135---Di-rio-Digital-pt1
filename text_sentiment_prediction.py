@@ -6,6 +6,9 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import load_model
 from datetime import datetime
 
+# pip install pandas
+# pip install tensorflow
+
 # Faça um dicionário de códigos e URLs para as diferentes emoções
 emo_code_url = {
     "vazio": [0, "./static/assets/emoticons/Empty.png"],

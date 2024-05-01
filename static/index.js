@@ -8,68 +8,64 @@ $(document).ready(function () {
     $("#save_button").prop('disabled',true)
 })
 //Defina a variável para armazenar a emoção prevista
-
-
-//HTML-->JavaScript--->Flask
-//Flask--->JavaScript--->HTML
-
-//seletor jQuery e ação de clique
+var predicted_emotion
+var predicted_emoji
 
 $(function () {
     $("#predict_button").click(function () {
-
-        let input_data = {
-            "text": $("#text").val()
-        }
-        //chamada AJAX
-        $.ajax({
-            type: 'POST',
-            url: "/predict-emotion",
-            data: JSON.stringify(input_data),
-            dataType: "json",
-            contentType: 'application/json',
-            success: function (result) {
-                
-                // Resultado recebido do Flask ----->JavaScript
-                predicted_emotion = result.data.predicted_emotion
-                emo_url = result.data.predicted_emoji
-
-                
-                // Exibir resultado usando JavaScript----->HTML
-                $("#prediction").html(predicted_emotion)
-                $('#prediction').css("display", "block");
-
-                $("#emo_img_url").attr('src', emo_url);
-                $('#emo_img_url').css("display", "block");
-                $('#save_button').prop('disabled',false);
-            },
-            error: function (result) {
-                alert(result.message)
+        // salvar os dados que precisam ser enviados
+            var input_data = {
+                "text" : $("#text").val()
             }
-        });
+        //criar a chamada ajax
+            $.ajax({
+                type: 'POST',
+                url: "/predict-emotion",
+                data: JSON.stringify(input_data),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (result) {    
+                    predicted_emotion = result.data.predicted_emotion
+                    predicted_emoji = result.data.predicted_emoji
+                    $("#prediction").html(predicted_emotion)
+                    $("#prediction").css("display","block")
+                    $("#emo_img_url").attr("src",predicted_emoji)
+                    $("#emo_img_url").css("display","block")
+                    $("#save_button").prop('disabled',false)
+                },
+                error : function (result) {
+                    alert(result.message)
+                },
+            })
+            //configurar o retorno do ajax
+
         
     });
 
     $("#save_button").click(function () {
-        save_data = {
-            "date": new_date,
+        // salvar os dados que precisam ser enviados
+        var save_data = {
+            "date" : new_date,
             "text": $("#text").val(),
-            "emotion": predicted_emotion
+            "emotion": predicted_emotion,
         }
+        //criar a chamada ajax
         $.ajax({
             type: 'POST',
-            url: "/save-entry",
-            data: JSON.stringify(save_data),
+            url: '/save-entry',
+            data:JSON.stringify(save_data),
             dataType: "json",
             contentType: 'application/json',
-            success: function () {
-                alert("Sua entrada foi salva com sucesso!")
-                window.location.reload()
+            success: function(result){
+                alert("Salvo!")
+                window.location.reload()  
             },
-            error: function (result) {
-                alert(result.responseJSON.message)
+            error:function(result) {
+                alert(result.message)
             }
-        });
+
+        })
+            //configurar o retorno do ajax
 
     });
 })
